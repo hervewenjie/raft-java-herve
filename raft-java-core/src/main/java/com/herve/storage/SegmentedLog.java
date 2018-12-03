@@ -23,6 +23,7 @@ public class SegmentedLog {
 
     private String logDir;
     private String logDataDir;
+    // max single log file size
     private int maxSegmentFileSize;
     @Getter private RaftMessage.LogMetaData metaData;
     private TreeMap<Long, Segment> startLogIndexSegmentMap = new TreeMap<>();
@@ -90,21 +91,30 @@ public class SegmentedLog {
         return lastSegment.getEndIndex();
     }
 
+    /**
+     * append entry to local log
+     * @param entries
+     * @return
+     */
     public long append(List<RaftMessage.LogEntry> entries) {
         long newLastLogIndex = this.getLastLogIndex();
+
+        // for each entry, write file
         for (RaftMessage.LogEntry entry : entries) {
             newLastLogIndex++;
             int entrySize = entry.getSerializedSize();
             int segmentSize = startLogIndexSegmentMap.size();
             boolean isNeedNewSegmentFile = false;
             try {
+                // no file, need new file
                 if (segmentSize == 0) {
                     isNeedNewSegmentFile = true;
                 } else {
                     Segment segment = startLogIndexSegmentMap.lastEntry().getValue();
                     if (!segment.isCanWrite()) {
                         isNeedNewSegmentFile = true;
-                    } else if (segment.getFileSize() + entrySize >= maxSegmentFileSize) {
+                    }
+                    else if (segment.getFileSize() + entrySize >= maxSegmentFileSize) {
                         isNeedNewSegmentFile = true;
                         // 最后一个segment的文件close并改名
                         segment.getRandomAccessFile().close();
@@ -120,15 +130,19 @@ public class SegmentedLog {
                         segment.setRandomAccessFile(RaftFileUtils.openFile(logDataDir, newFileName, "r"));
                     }
                 }
+
                 Segment newSegment;
-                // 新建segment文件
+                // create new segment file
                 if (isNeedNewSegmentFile) {
                     // open new segment file
                     String newSegmentFileName = String.format("open-%d", newLastLogIndex);
                     String newFullFileName = logDataDir + File.separator + newSegmentFileName;
                     File newSegmentFile = new File(newFullFileName);
                     if (!newSegmentFile.exists()) {
-                        newSegmentFile.createNewFile();
+                        boolean b = newSegmentFile.createNewFile();
+                        if (!b) {
+                            throw new IOException("create new log file failed");
+                        }
                     }
                     Segment segment = new Segment();
                     segment.setCanWrite(true);
@@ -140,7 +154,8 @@ public class SegmentedLog {
                 } else {
                     newSegment = startLogIndexSegmentMap.lastEntry().getValue();
                 }
-                // 写proto到segment中
+
+                // write proto to segment
                 if (entry.getIndex() == 0) {
                     entry = RaftMessage.LogEntry.newBuilder(entry)
                             .setIndex(newLastLogIndex).build();

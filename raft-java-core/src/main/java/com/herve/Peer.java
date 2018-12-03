@@ -19,9 +19,9 @@ public class Peer {
     @Getter private RPCClient rpcClient;
     @Getter private RaftConsensusService raftConsensusService;
     @Getter private RaftConsensusServiceAsync raftConsensusServiceAsync;
-    // 需要发送给follower的下一个日志条目的索引值，只对leader有效
+    // next index need to send to follower, only valid for leader
     @Getter @Setter private long nextIndex;
-    // 已复制日志的最高索引值
+    // index of highest log entry known to be replicated on server
     @Getter @Setter private long matchIndex;
     @Getter @Setter private volatile Boolean isVoteGranted;
     @Getter @Setter private volatile Boolean isCatchUp;

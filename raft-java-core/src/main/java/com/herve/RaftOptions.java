@@ -40,5 +40,5 @@ public class RaftOptions {
     private boolean asyncWrite = false;
 
     // raft的log和snapshot父目录，绝对路径s
-    private String dataDir = System.getProperty("com.github.wenweihu86.raft.data.dir");
+    private String dataDir = System.getProperty("com.herve.raft.data.dir");
 }
