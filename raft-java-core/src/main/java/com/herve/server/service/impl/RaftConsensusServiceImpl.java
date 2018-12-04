@@ -1,10 +1,10 @@
-package com.herve.service.impl;
+package com.herve.server.service.impl;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import com.herve.RaftNode;
 import com.herve.proto.RaftMessage;
-import com.herve.service.RaftConsensusService;
+import com.herve.server.service.RaftConsensusService;
 import com.herve.util.ConfigurationUtils;
 import com.herve.util.RaftFileUtils;
 import org.apache.commons.io.FileUtils;
@@ -104,6 +104,7 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
     public RaftMessage.AppendEntriesResponse appendEntries(RaftMessage.AppendEntriesRequest request) {
         raftNode.getLock().lock();
         try {
+            // init response
             RaftMessage.AppendEntriesResponse.Builder responseBuilder
                     = RaftMessage.AppendEntriesResponse.newBuilder();
             responseBuilder.setTerm(raftNode.getCurrentTerm());
@@ -151,6 +152,7 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                 return responseBuilder.build();
             }
 
+            // if entry count zero, heartbeat request
             if (request.getEntriesCount() == 0) {
                 LOG.debug("heartbeat request from peer={} at term={}, my term={}",
                         request.getServerId(), request.getTerm(), raftNode.getCurrentTerm());
@@ -161,6 +163,7 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                 return responseBuilder.build();
             }
 
+            // success if reach here
             responseBuilder.setResCode(RaftMessage.ResCode.RES_CODE_SUCCESS);
             List<RaftMessage.LogEntry> entries = new ArrayList<>();
             long index = request.getPrevLogIndex();
@@ -179,6 +182,8 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                 }
                 entries.add(entry);
             }
+            // append entries
+            // update meta data
             raftNode.getRaftLog().append(entries);
             raftNode.getRaftLog().updateMetaData(raftNode.getCurrentTerm(),
                     null, raftNode.getRaftLog().getFirstLogIndex());
@@ -292,7 +297,7 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
             String snapshotDataDir = raftNode.getSnapshot().getSnapshotDir() + File.separator + "data";
             raftNode.getStateMachine().readSnapshot(snapshotDataDir);
             long lastSnapshotIndex;
-            // 重新加载snapshot
+            // reload snapshot
             raftNode.getSnapshot().getLock().lock();
             try {
                 raftNode.getSnapshot().reload();

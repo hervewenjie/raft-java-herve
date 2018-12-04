@@ -1,11 +1,11 @@
-package com.herve.service.impl;
+package com.herve.server.service.impl;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import com.herve.Peer;
 import com.herve.RaftNode;
 import com.herve.proto.RaftMessage;
-import com.herve.service.RaftClientService;
+import com.herve.server.service.RaftClientService;
 import com.herve.util.ConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

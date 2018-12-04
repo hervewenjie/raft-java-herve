@@ -1,4 +1,4 @@
-package com.herve.service;
+package com.herve.server.service;
 
 import com.herve.proto.RaftMessage;
 

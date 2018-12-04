@@ -82,6 +82,7 @@ public class RaftNode {
                     List<RaftMessage.Server> servers,
                     RaftMessage.Server localServer,
                     StateMachine stateMachine) {
+
         this.raftOptions = raftOptions;
         RaftMessage.Configuration.Builder confBuilder = RaftMessage.Configuration.newBuilder();
         for (RaftMessage.Server server : servers) {
@@ -180,10 +181,15 @@ public class RaftNode {
                 executorService.submit(() -> appendEntries(peer));
             });
 
+            // --------------------------------------
+            // ATTENTION
+            // providing this option merely for performance sake
+            // it violates raft's safety requirements
             if (raftOptions.isAsyncWrite()) {
                 // if async, return after leader write
                 return true;
             }
+            // --------------------------------------
 
             // sync wait commitIndex >= newLastLogIndex
             long startTime = System.currentTimeMillis();

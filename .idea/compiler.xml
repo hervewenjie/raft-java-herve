@@ -8,10 +8,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="raft-java-core" />
+        <module name="raft-java-example" />
+        <module name="raftjavaexample" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="raft-java-core" target="1.8" />
+      <module name="raft-java-example" target="1.8" />
       <module name="raftjavaherve" target="1.8" />
     </bytecodeTargetLevel>
   </component>

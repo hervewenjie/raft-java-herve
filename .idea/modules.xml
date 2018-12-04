@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/raft-java-core/raft-java-core.iml" filepath="$PROJECT_DIR$/raft-java-core/raft-java-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/raft-java-example/raft-java-example.iml" filepath="$PROJECT_DIR$/raft-java-example/raft-java-example.iml" />
       <module fileurl="file://$PROJECT_DIR$/raftjavaherve.iml" filepath="$PROJECT_DIR$/raftjavaherve.iml" />
     </modules>
   </component>

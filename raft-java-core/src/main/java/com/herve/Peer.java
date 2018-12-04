@@ -4,9 +4,8 @@ import com.github.wenweihu86.rpc.client.EndPoint;
 import com.github.wenweihu86.rpc.client.RPCClient;
 import com.github.wenweihu86.rpc.client.RPCProxy;
 import com.herve.proto.RaftMessage;
-import com.herve.service.RaftConsensusService;
-import com.herve.service.RaftConsensusServiceAsync;
-import lombok.Data;
+import com.herve.server.service.RaftConsensusService;
+import com.herve.server.service.RaftConsensusServiceAsync;
 import lombok.Getter;
 import lombok.Setter;
 
